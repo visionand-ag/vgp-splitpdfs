@@ -4,3 +4,5 @@ split-pdfs.pfx
 split-pdfs.cer
 split-pdfs.crt
 __pycache__/
+local.settings.json
+settings.json
