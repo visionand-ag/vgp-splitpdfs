@@ -378,8 +378,6 @@ Monitor Function execution through:
 
 ### Common Issues
 
-### Common Issues
-
 **Deployment Script Failures**
 - **ACR Build Timeout**: Increase build timeout or use smaller base image
 - **Resource Naming Conflicts**: Ensure resource names are globally unique
@@ -390,11 +388,6 @@ Monitor Function execution through:
 - **Invalid JSON Format**: Validate `settings.json` syntax before running script
 - **Missing Required Settings**: Ensure all environment variables are included
 - **Function App Not Found**: Verify Function App was created successfully in previous step
-
-**OCR Processing Slow**
-- Reduce PDF resolution in `pdf2image` conversion
-- Limit parallel OCR threads
-- Consider preprocessing images
 
 **SharePoint Upload Failures**
 - Verify certificate thumbprint matches
