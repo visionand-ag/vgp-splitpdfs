@@ -1,0 +1,17 @@
+{
+  "CLIENT_ID": "632974a1-db00-42a2-891f-13ab91ceb49e",
+  "CLIENT_SECRET": "iG.8Q~7_vhXllrmlvBJGZysegnhKzguiD9XOIcFE",
+  "SHAREPOINT_SITE_URL": "https://visionand.sharepoint.com/sites/flow2",
+  "SHAREPOINT_SITE_NAME": "flow2",
+  "SHAREPOINT_DOC_LIBRARY": "DigitalerPosteingang",
+  "TENANT_NAME": "vision&",
+  "TENANT_ID": "82537e2b-dbd6-4d69-a801-dac6b976e278",
+  "SA_URL": "https://splitpdfsa.blob.core.windows.net/",
+  "SA_NAME": "splitpdfsa",
+  "SA_CONTAINER_NAME_PDFS": "pdfs",
+  "SA_CONTAINER_NAME_PROCESSED_PDFS": "processed-pdfs",
+  "CERTIFICATE_PATH": "shared/certs",
+  "THUMBPRINT": "A7DB32FDD4B4BCE2FB332740449B01B942E9F97C",
+  "DIVIDER_TEXT": "Patch T/",
+  "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=splitpdfsa;AccountKey=G5UGWE2ImaGxcqWu62lBe0tIgCsM4tWbhgK4+bbEr7qyY27Wp/sKMiF1iGQTNsJamOGojffBm62q+AStoVzDLA==;EndpointSuffix=core.windows.net"
+}
