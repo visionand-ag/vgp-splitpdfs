@@ -189,11 +189,6 @@ Monitor Function execution through:
 
 ### Common Issues
 
-**OCR Processing Slow**
-- Reduce PDF resolution in `pdf2image` conversion
-- Limit parallel OCR threads
-- Consider preprocessing images
-
 **SharePoint Upload Failures**
 - Verify certificate thumbprint matches
 - Check SharePoint permissions
