@@ -1,5 +1,5 @@
-*.pem
-*.key
-*.pfx
-*.cer
-*.crt
+split-pdfs.pem
+split-pdfs.key
+split-pdfs.pfx
+split-pdfs.cer
+split-pdfs.crt
