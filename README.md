@@ -223,7 +223,7 @@ Monitor Function execution through:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🏢 About VisionAnd
+## 🏢 About Vision&
 
 Developed by [VisionAnd AG](https://visionand.ch) - Empowering businesses through intelligent document automation solutions.
 
