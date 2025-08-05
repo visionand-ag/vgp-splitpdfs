@@ -47,6 +47,42 @@ PDF Upload → Blob Storage → Azure Function → PDF Processing → SharePoint
 - Multi-language OCR support (German, English, French, Italian)
 - Optimized for Azure Functions runtime
 
+## ✅ Deployment Checklist
+
+Before running the deployment scripts, ensure you have:
+
+- [ ] Azure CLI installed and authenticated (`az login`)
+- [ ] Docker installed (for containerized deployment)
+- [ ] Proper Azure subscription permissions (Contributor role minimum)
+- [ ] Unique resource names configured in `deploy.sh`
+- [ ] Certificate files generated and placed in `certs/` directory
+- [ ] `settings.json` file created with all required environment variables
+- [ ] SharePoint site and document library accessible
+- [ ] Azure AD app registration permissions configured
+
+### Quick Start Commands
+
+```bash
+# 1. Clone and navigate to project
+git clone <repository-url>
+cd vgp-splitpdfs
+
+# 2. Configure deployment variables
+nano deploy.sh  # Edit resource names and location
+
+# 3. Run infrastructure deployment
+chmod +x deploy.sh && ./deploy.sh
+
+# 4. Create settings.json with your environment variables
+nano settings.json
+
+# 5. Apply application settings
+chmod +x app_settings.sh && ./app_settings.sh
+
+# 6. Upload certificate to Azure AD app registration (manual step)
+# 7. Test with a sample PDF upload
+```
+
 ## 🛠️ Setup & Installation
 
 ### Prerequisites
@@ -101,24 +137,177 @@ openssl x509 -inform DER -in split-pdfs.cer -out split-pdfs.pem
 2. Upload the `.cer` file to your Azure AD app registration
 3. Place certificate files in the `certs/` directory
 
-### 3. Deployment Options
+### 3. Automated Deployment with Scripts
 
-#### Option A: Docker Deployment
+This project includes automated deployment scripts that handle the complete Azure infrastructure setup and application deployment.
+
+#### Step 1: Configure Deployment Variables
+
+Edit the `deploy.sh` script to match your environment:
+
 ```bash
-# Build the container
-docker build -t vgp-splitpdfs .
-
-# Deploy to Azure Container Registry
-az acr build --registry myregistry --image vgp-splitpdfs .
+RESOURCE_GROUP="prod-01-appl-splitpdfs"
+ACR_NAME="vgpsplitpdfsacr"
+FUNCTION_APP_NAME="splitpdfs-fapp-cont"
+STORAGE_ACCOUNT="splitpdfsa"
+APP_SERVICE_PLAN="splitpdfs-asp"
+LOCATION="switzerlandnorth"
+CLIENT_NAME="splitpdfs-client"
 ```
 
-#### Option B: Direct Deployment
+#### Step 2: Run Complete Infrastructure Deployment
+
+Execute the deployment script to create all Azure resources:
+
 ```bash
-# Install dependencies
+chmod +x deploy.sh
+./deploy.sh
+```
+
+**What the deployment script does:**
+
+1. **Azure Login & Resource Group Creation**
+   ```bash
+   az login
+   az group create --name $RESOURCE_GROUP --location "$LOCATION"
+   ```
+
+2. **Role Assignment Setup**
+   - Assigns Contributor role to current user
+   - Creates Azure AD application for SharePoint authentication
+   - Assigns Storage Blob Data Contributor role to the AD app
+
+3. **Container Registry Setup**
+   ```bash
+   az acr create --resource-group $RESOURCE_GROUP --name $ACR_NAME --sku Basic
+   az acr build --registry $ACR_NAME --image pdf-splitting-function:latest
+   ```
+
+4. **Storage Account & Containers**
+   - Creates storage account with Standard_LRS SKU
+   - Creates `pdfs` container (for incoming PDFs)
+   - Creates `processed-pdfs` container (for processed files)
+
+5. **App Service Plan & Function App**
+   ```bash
+   az appservice plan create --name $APP_SERVICE_PLAN --sku P1V2 --is-linux
+   az functionapp create --image $ACR_LOGIN_SERVER/pdf-splitting-function:latest
+   ```
+
+6. **Managed Identity Configuration**
+   - Assigns system-assigned managed identity to Function App
+   - Grants Storage Blob Data Contributor role to the managed identity
+
+#### Step 3: Configure Application Settings
+
+After successful deployment, configure the Function App settings using the `app_settings.sh` script:
+
+1. **Create settings.json file** with your environment variables:
+   ```json
+   [
+     {
+       "name": "TENANT_NAME",
+       "value": "your-tenant.onmicrosoft.com"
+     },
+     {
+       "name": "TENANT_ID", 
+       "value": "your-tenant-id"
+     },
+     {
+       "name": "CLIENT_ID",
+       "value": "your-app-registration-id"
+     },
+     {
+       "name": "SHAREPOINT_SITE_URL",
+       "value": "https://yourtenant.sharepoint.com/sites/yoursite"
+     },
+     {
+       "name": "SHAREPOINT_DOC_LIBRARY",
+       "value": "/sites/yoursite/Shared Documents"
+     },
+     {
+       "name": "SA_URL",
+       "value": "https://yourstorageaccount.blob.core.windows.net"
+     },
+     {
+       "name": "SA_CONTAINER_NAME_PDFS",
+       "value": "pdfs"
+     },
+     {
+       "name": "SA_CONTAINER_NAME_PROCESSED_PDFS", 
+       "value": "processed-pdfs"
+     },
+     {
+       "name": "DIVIDER_TEXT",
+       "value": "YOUR_DIVIDER_TEXT"
+     }
+   ]
+   ```
+
+2. **Execute the app settings script**:
+   ```bash
+   chmod +x app_settings.sh
+   ./app_settings.sh
+   ```
+
+**What the app settings script does:**
+
+1. **Applies Configuration**: Loads settings from `settings.json` to Function App
+   ```bash
+   az functionapp config appsettings set --name $FUNCTION_APP_NAME \
+     -g $RESOURCE_GROUP --settings @settings.json
+   ```
+
+2. **Restarts Function App**: Ensures new settings take effect
+   ```bash
+   az functionapp restart --name $FUNCTION_APP_NAME --resource-group $RESOURCE_GROUP
+   ```
+
+3. **Verifies Deployment**: Checks Function App state
+   ```bash
+   az functionapp show --name $FUNCTION_APP_NAME --query state
+   ```
+
+#### Step 4: Post-Deployment Configuration
+
+After running both scripts, complete these manual steps:
+
+1. **Upload Certificate to Azure AD App Registration**:
+   - Navigate to Azure Portal → Azure Active Directory → App registrations
+   - Select your app (`splitpdfs-client`)
+   - Go to Certificates & secrets → Upload certificate
+   - Upload the `split-pdfs.cer` file
+
+2. **Configure SharePoint Permissions**:
+   - Grant necessary permissions to the Azure AD application
+   - Ensure the app has access to your SharePoint site and document library
+
+3. **Test the Function**:
+   - Upload a test PDF to the `pdfs` container
+   - Monitor Function logs for successful processing
+   - Verify split PDFs appear in SharePoint document library
+
+#### Alternative: Manual Deployment Options
+
+If you prefer manual deployment:
+
+**Option A: Docker Build & Push**
+```bash
+# Build the container locally
+docker build -t vgp-splitpdfs .
+
+# Tag and push to your registry
+docker tag vgp-splitpdfs your-registry.azurecr.io/vgp-splitpdfs:latest
+docker push your-registry.azurecr.io/vgp-splitpdfs:latest
+```
+
+**Option B: Direct Code Deployment**
+```bash
+# Install dependencies locally
 pip install -r requirements.txt
 
 # Deploy using Azure Functions Core Tools
-func azure functionapp publish your-function-app-name
+func azure functionapp publish your-function-app-name --build remote
 ```
 
 ## 📁 Project Structure
@@ -188,6 +377,24 @@ Monitor Function execution through:
 - Live Log Stream
 
 ### Common Issues
+
+### Common Issues
+
+**Deployment Script Failures**
+- **ACR Build Timeout**: Increase build timeout or use smaller base image
+- **Resource Naming Conflicts**: Ensure resource names are globally unique
+- **Permission Issues**: Verify you have Contributor access to the subscription
+- **Location Availability**: Check if selected Azure region supports all services
+
+**App Settings Configuration**
+- **Invalid JSON Format**: Validate `settings.json` syntax before running script
+- **Missing Required Settings**: Ensure all environment variables are included
+- **Function App Not Found**: Verify Function App was created successfully in previous step
+
+**OCR Processing Slow**
+- Reduce PDF resolution in `pdf2image` conversion
+- Limit parallel OCR threads
+- Consider preprocessing images
 
 **SharePoint Upload Failures**
 - Verify certificate thumbprint matches
