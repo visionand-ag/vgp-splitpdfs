@@ -1,0 +1,11 @@
+.env
+*.pem
+*.key
+*.pfx
+*.cer
+*.crt
+__pycache__/
+local.settings.json
+settings.json
+deploy.sh
+app_settings.sh
