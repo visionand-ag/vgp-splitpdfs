@@ -129,8 +129,8 @@ def _upload_to_sharepoint(pdf_buffer: BytesIO, output_filename: str, blob_name: 
     cert_credentials = {
         "tenant": config['tenant_id'],
         "client_id": config['client_id'],
-        "thumbprint": "A7DB32FDD4B4BCE2FB332740449B01B942E9F97C",
-        "cert_path": "certs/split-pdfs.pem"
+        "thumbprint": config['thumbprint'],
+        "cert_path": config['certificate_path']
     }
     
     logging.info(f"Attempting to upload {output_filename} to SharePoint...")
