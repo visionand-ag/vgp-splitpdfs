@@ -12,6 +12,8 @@ This Azure Function monitors a blob storage container for uploaded PDF files and
 
 ## 🏗️ Architecture
 
+![Architecture Diagram](arch.png)
+
 ```
 PDF Upload → Blob Storage → Azure Function → PDF Processing → SharePoint Upload
                 ↓
