@@ -1,12 +1,12 @@
 #!/bin/bash
 
-RESOURCE_GROUP="prod-01-appl-splitpdfs"
-ACR_NAME="vgpsplitpdfsacr"
-FUNCTION_APP_NAME="splitpdfs-fapp-cont"
-STORAGE_ACCOUNT="splitpdfsa"
-APP_SERVICE_PLAN="splitpdfs-asp"
-LOCATION="switzerlandnorth"
-CLIENT_NAME="splitpdfs-client"
+RESOURCE_GROUP=""
+ACR_NAME=""
+FUNCTION_APP_NAME=""
+STORAGE_ACCOUNT=""
+APP_SERVICE_PLAN=""
+LOCATION=""
+CLIENT_NAME=""
 
 # Login to Azure
 az login

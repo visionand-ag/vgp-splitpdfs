@@ -1,7 +1,7 @@
 #!/bin/bash
 
-RESOURCE_GROUP="prod-01-appl-splitpdfs"
-FUNCTION_APP_NAME="splitpdfs-fapp-cont"
+RESOURCE_GROUP=""
+FUNCTION_APP_NAME=""
 
 # Login to Azure
 az login
