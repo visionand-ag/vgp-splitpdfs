@@ -5,6 +5,7 @@ A serverless Azure Function that automatically processes PDF documents by detect
 ## 🚀 Overview
 
 This Azure Function monitors a blob storage container for uploaded PDF files and automatically:
+
 1. **Detects divider pages** using text extraction or OCR (Optical Character Recognition)
 2. **Splits PDFs** into separate documents based on divider locations
 3. **Uploads split documents** to SharePoint with timestamped filenames
@@ -28,21 +29,25 @@ PDF Upload → Blob Storage → Azure Function → PDF Processing → SharePoint
 ## 📋 Features
 
 ### ✨ Smart Divider Detection
+
 - **Fast Path**: Text-based divider detection for searchable PDFs
 - **Fallback Path**: OCR-based detection for image-based or scanned PDFs
 - **Parallel Processing**: Multi-threaded OCR for improved performance
 
 ### 🔒 Secure SharePoint Integration
+
 - Certificate-based authentication with Azure AD
 - Automatic file uploads with timestamp-based naming
 - Connection testing and error recovery
 
 ### 📊 Comprehensive Logging
+
 - Detailed execution tracking
 - Error reporting with stack traces
 - Performance monitoring
 
 ### 🐳 Container Ready
+
 - Docker support for consistent deployments
 - Multi-language OCR support (German, English, French, Italian)
 - Optimized for Azure Functions runtime
@@ -128,6 +133,7 @@ DIVIDER_TEXT=DIVIDER_PAGE_TEXT
 ### 2. Certificate Setup
 
 1. Generate a certificate for Azure AD app registration:
+
 ```bash
 openssl req -x509 -newkey rsa:2048 -keyout split-pdfs.key -out split-pdfs.cer -days 365 -nodes
 openssl pkcs12 -export -out split-pdfs.pfx -inkey split-pdfs.key -in split-pdfs.cer
@@ -167,28 +173,33 @@ chmod +x deploy.sh
 **What the deployment script does:**
 
 1. **Azure Login & Resource Group Creation**
+
    ```bash
    az login
    az group create --name $RESOURCE_GROUP --location "$LOCATION"
    ```
 
 2. **Role Assignment Setup**
+
    - Assigns Contributor role to current user
    - Creates Azure AD application for SharePoint authentication
    - Assigns Storage Blob Data Contributor role to the AD app
 
 3. **Container Registry Setup**
+
    ```bash
    az acr create --resource-group $RESOURCE_GROUP --name $ACR_NAME --sku Basic
    az acr build --registry $ACR_NAME --image pdf-splitting-function:latest
    ```
 
 4. **Storage Account & Containers**
+
    - Creates storage account with Standard_LRS SKU
    - Creates `pdfs` container (for incoming PDFs)
    - Creates `processed-pdfs` container (for processed files)
 
 5. **App Service Plan & Function App**
+
    ```bash
    az appservice plan create --name $APP_SERVICE_PLAN --sku P1V2 --is-linux
    az functionapp create --image $ACR_LOGIN_SERVER/pdf-splitting-function:latest
@@ -203,6 +214,7 @@ chmod +x deploy.sh
 After successful deployment, configure the Function App settings using the `app_settings.sh` script:
 
 1. **Create settings.json file** with your environment variables:
+
    ```json
    [
      {
@@ -210,7 +222,7 @@ After successful deployment, configure the Function App settings using the `app_
        "value": "your-tenant.onmicrosoft.com"
      },
      {
-       "name": "TENANT_ID", 
+       "name": "TENANT_ID",
        "value": "your-tenant-id"
      },
      {
@@ -234,7 +246,7 @@ After successful deployment, configure the Function App settings using the `app_
        "value": "pdfs"
      },
      {
-       "name": "SA_CONTAINER_NAME_PROCESSED_PDFS", 
+       "name": "SA_CONTAINER_NAME_PROCESSED_PDFS",
        "value": "processed-pdfs"
      },
      {
@@ -253,12 +265,14 @@ After successful deployment, configure the Function App settings using the `app_
 **What the app settings script does:**
 
 1. **Applies Configuration**: Loads settings from `settings.json` to Function App
+
    ```bash
    az functionapp config appsettings set --name $FUNCTION_APP_NAME \
      -g $RESOURCE_GROUP --settings @settings.json
    ```
 
 2. **Restarts Function App**: Ensures new settings take effect
+
    ```bash
    az functionapp restart --name $FUNCTION_APP_NAME --resource-group $RESOURCE_GROUP
    ```
@@ -273,12 +287,14 @@ After successful deployment, configure the Function App settings using the `app_
 After running both scripts, complete these manual steps:
 
 1. **Upload Certificate to Azure AD App Registration**:
+
    - Navigate to Azure Portal → Azure Active Directory → App registrations
    - Select your app (`splitpdfs-client`)
    - Go to Certificates & secrets → Upload certificate
    - Upload the `split-pdfs.cer` file
 
 2. **Configure SharePoint Permissions**:
+
    - Grant necessary permissions to the Azure AD application
    - Ensure the app has access to your SharePoint site and document library
 
@@ -292,6 +308,7 @@ After running both scripts, complete these manual steps:
 If you prefer manual deployment:
 
 **Option A: Docker Build & Push**
+
 ```bash
 # Build the container locally
 docker build -t vgp-splitpdfs .
@@ -302,6 +319,7 @@ docker push your-registry.azurecr.io/vgp-splitpdfs:latest
 ```
 
 **Option B: Direct Code Deployment**
+
 ```bash
 # Install dependencies locally
 pip install -r requirements.txt
@@ -336,19 +354,24 @@ vgp-splitpdfs/
 ## 🔧 Configuration
 
 ### Divider Text Configuration
+
 Set the `DIVIDER_TEXT` environment variable to specify what text identifies divider pages:
+
 ```env
 DIVIDER_TEXT="--- DIVIDER ---"
 ```
 
 ### OCR Language Support
+
 The Docker container includes support for:
+
 - German (`deu`)
-- English (`eng`) 
+- English (`eng`)
 - French (`fra`)
 - Italian (`ita`)
 
 Add additional languages by modifying the Dockerfile:
+
 ```dockerfile
 RUN apt-get install -y tesseract-ocr-spa  # Spanish support
 ```
@@ -362,6 +385,7 @@ RUN apt-get install -y tesseract-ocr-spa  # Spanish support
 5. **Archive**: Original PDFs move to `processed-pdfs/` container
 
 ### Example Output Filenames
+
 ```
 original-document_doc_1_05082025_143022.pdf
 original-document_doc_2_05082025_143022.pdf
@@ -371,7 +395,9 @@ original-document_doc_3_05082025_143022.pdf
 ## 📊 Monitoring & Troubleshooting
 
 ### Log Analysis
+
 Monitor Function execution through:
+
 - Azure Portal → Function App → Functions → Monitor
 - Application Insights (if configured)
 - Live Log Stream
@@ -379,11 +405,13 @@ Monitor Function execution through:
 ### Common Issues
 
 **SharePoint Upload Failures**
+
 - Verify certificate thumbprint matches
 - Check SharePoint permissions
 - Validate site URL and library path
 
 **Memory Issues with Large PDFs**
+
 - Implement streaming for large files
 - Add memory monitoring
 - Consider chunked processing
@@ -409,7 +437,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🏢 About Vision&
 
-Developed by [VisionAnd AG](https://visionand.ch) - Empowering businesses through intelligent document automation solutions.
+Developed by [visionand AG](https://visionand.ch) - Empowering businesses through intelligent document automation solutions.
 
 ---
 
