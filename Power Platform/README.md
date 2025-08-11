@@ -93,16 +93,23 @@ Upload the [documents](TemplateFiles.zip) to the `Templates` library
 
 1. Use the [Creator Kit](CreatorKitCore_1_0_20250310_1_managed.zip) and upload it as a solution
 
-### 6. Follow the instructions from the azure function
+### 6. Create App Registration
+
+1. Create an app registration called, name of your choosing, e.g. prd-01-appl-flow
+2. Add Dynamics CRM API permissions of type Delegate with user_impersonation
+3. Click on Certificates & secrets
+4. Generate a new secret and give it a description (e.g. Flow - Dataverse)
+
+### 7. Follow the instructions from the azure function
 
 At this point, the azure function instructions can be followed. Once done, come back here and continue
 
-## 7. Sites.Selected Permissions
+### 8. Sites.Selected Permissions
 
 The service principal needs to be created before continuing with this step.
 To give permissions to sites.selected, we have 2 options. Choose one that works best for you.
 
-### Option 1: Graph Explorer
+#### Option 1: Graph Explorer
 
 ```http
 GET | https://graph.microsoft.com/v1.0/sites?select=webUrl,Title,Id&$search="<Name of the site>*"
@@ -122,7 +129,7 @@ POST | https://graph.microsoft.com/v1.0/sites/<SiteId from above>/permissions
 }
 ```
 
-### Option 2: MS Graph PowerShell
+#### Option 2: MS Graph PowerShell
 
 ```powershell
 Search-MgSite -Search '"<Name of the site>*"' | Select-Object WebUrl, DisplayName, Id
@@ -141,17 +148,21 @@ $body = @{
 } | ConvertTo-Json -Depth 10
 ```
 
-## 8. Upload solution file
+### 9. Upload solution file
 
 1. Upload the file [ProcessApp_1_0_0_18.zip](ProcessApp_1_0_0_18.zip) (DEV), respectively [ProcessApp_1_0_0_18_managed.zip](ProcessApp_1_0_0_18_managed.zip) (PRD) to the solutions
 2. Set all connections and variables (if first time deployment. This step isn't necessary if the solution has already been deployed before and no new connections/variables have been added)
 
-### Add Users
+#### Connectors
+
+Log in with all the prompted connectors. Make sure to login with a service principal if the connection name is called "Service Principal", or with the service account if it's called "Service Account". If it's called "User Account", you may login with your personal account.
+
+#### Add Users
 
 1. Share the app with all users
 2. Make sure the role "Flow User" is assigned
 
-### Environment variables
+#### Environment variables
 
 Make sure the following environment variables have the right values:
 
@@ -224,13 +235,13 @@ Make sure the following environment variables have the right values:
 
 - flowOpenDataSampleFileUrl: The URL to the sample file for bulk uploads (to be found in the Templates folder)
 
-### Other
+#### Other
 
 1. Make sure that all flows are turned on
 2. Make sure all users are in the defined groups
 3. Test the app for any errors
 
-### 9. Set the
+### 10. Set the
 
 ## 📄 License
 
