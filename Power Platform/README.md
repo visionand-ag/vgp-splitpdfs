@@ -157,6 +157,18 @@ $body = @{
 
 Log in with all the prompted connectors. Make sure to login with a service principal if the connection name is called "Service Principal", or with the service account if it's called "Service Account". If it's called "User Account", you may login with your personal account.
 
+#### Apply role to Service Principal
+
+1. Open the Power Platform Admin Center
+2. Click on the environment where you installed the solution to
+3. Click on `Settings`
+4. Expand `Users + permissions` and click on Application users
+5. Click on `New app user`
+6. Click on `Add an app` and add the service principal from the previous step
+7. Set the business unit
+8. Click on the edit icon next to `Security roles`
+9. Add the "Flow User" role and save
+
 #### Add Users
 
 1. Share the app with all users
