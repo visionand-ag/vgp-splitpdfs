@@ -167,7 +167,7 @@ Log in with all the prompted connectors. Make sure to login with a service princ
 6. Click on `Add an app` and add the service principal from the previous step
 7. Set the business unit
 8. Click on the edit icon next to `Security roles`
-9. Add the "Flow User" role and save
+9. Add the "Flow Admin" role and save
 
 #### Add Users
 
