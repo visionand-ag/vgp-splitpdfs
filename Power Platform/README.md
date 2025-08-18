@@ -253,7 +253,19 @@ Make sure the following environment variables have the right values:
 2. Make sure all users are in the defined groups
 3. Test the app for any errors
 
-### 10. Set the
+### 10. Add App Settings records
+
+If the following record already exist, skip this step. Otherwise, follow:
+
+1. Go to https://make.powerapps.com (ensure the environment)
+2. Click on Tables
+3. Search for "AppSettings"
+4. Open it and add the following record:
+
+```
+Name: Last Document Check
+Key: lastDocCheck
+```
 
 ## 📄 License
 
