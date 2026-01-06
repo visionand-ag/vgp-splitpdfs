@@ -15,6 +15,8 @@ Before running the deployment scripts, ensure you have:
 - [ ] Solution successfully deployed
 - [ ] Environment variables set
 - [ ] Cloud Flows active
+- [ ] All Excel Templates are uploaded to the libraries
+
 
 ## 🛠️ Setup & Installation
 
@@ -32,7 +34,7 @@ Before running the deployment scripts, ensure you have:
   - Office 365 Users - User
   - OneDrive for Business - Service User
   - SharePoint - Service User
-- SharePoint Bibliotheken
+- SharePoint Libraries
 - Shared Mailbox
 - Service Account
 - PowerShell Modul MS Graph PowerShell
@@ -54,8 +56,9 @@ Before running the deployment scripts, ensure you have:
 4. Create a library called `Templates`
 5. Create a library called `DigitalerPosteingang`
 6. Create a library called `DigitalerPosteingangIn`
-7. (Optional) Create an additional library for triggers
-8. (Optional) Create an additional library for actions (saving documents)
+7. Create a library called `FlowDocs`
+8. (Optional) Create an additional library for triggers
+9. (Optional) Create an additional library for actions (saving documents)
 
 #### Upload documents
 
@@ -150,7 +153,7 @@ $body = @{
 
 ### 9. Upload solution file
 
-1. Upload the file [ProcessApp_1_0_0_18.zip](ProcessApp_1_0_0_18.zip) (DEV), respectively [ProcessApp_1_0_0_18_managed.zip](ProcessApp_1_0_0_18_managed.zip) (PRD) to the solutions
+1. Upload the file [ProcessApp_1_0_0_64.zip](ProcessApp_1_0_0_64.zip) (DEV), respectively [ProcessApp_1_0_0_64_managed.zip](ProcessApp_1_0_0_64_managed.zip) (PRD) to the solutions
 2. Set all connections and variables (if first time deployment. This step isn't necessary if the solution has already been deployed before and no new connections/variables have been added)
 
 #### Connectors
